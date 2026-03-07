@@ -1,0 +1,32 @@
+services:
+  # ── FastAPI Backend ────────────────────────────────────────────────────────
+  api:
+    image: litmusai/litmus-backend:latest
+    container_name: litmus-api
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      - ${LITMUS_DATA_DIR:-./data}:/data
+    environment:
+      - LITMUS_DB_PATH=/data/litmus.db
+      - LITMUS_CHROMA_PATH=/data/chroma
+      - LITMUS_PROJECT_ID=${LITMUS_PROJECT_ID:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:?OPENAI_API_KEY is required}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+  # ── React Dashboard (nginx) ────────────────────────────────────────────────
+  dashboard:
+    image: litmusai/litmus-frontend:latest
+    container_name: litmus-dashboard
+    restart: unless-stopped
+    ports:
+      - "${DASHBOARD_PORT:-3000}:80"
+    depends_on:
+      api:
+        condition: service_healthy
