@@ -45,36 +45,20 @@ API_PORT="${API_PORT:-8000}"
 DASHBOARD_PORT="${DASHBOARD_PORT:-3000}"
 LITMUS_DATA_DIR="${LITMUS_DATA_DIR:-./data}"
 
-# Resolve LITMUS_DATA_DIR to an absolute host-side path so the SDK and the backend (in the container) read/write the same SQLite database file.
-SETUP_DIR="$(cd "$(dirname "$0")" && pwd)"
-case "$LITMUS_DATA_DIR" in
-  /*) ABS_DATA_DIR="$LITMUS_DATA_DIR" ;;
-  *)  ABS_DATA_DIR="$SETUP_DIR/${LITMUS_DATA_DIR#./}" ;;
-esac
-mkdir -p "$ABS_DATA_DIR"
-
-HOST_DB_PATH="$ABS_DATA_DIR/litmus.db"
-HOST_CHROMA_PATH="$ABS_DATA_DIR/chroma"
-
 # ── Write .env ─────────────────────────────────────────────────────────────
 cat > "$ENV_FILE" <<EOF
 OPENAI_API_KEY=${OPENAI_API_KEY}
 API_PORT=${API_PORT}
 DASHBOARD_PORT=${DASHBOARD_PORT}
 LITMUS_DATA_DIR=${LITMUS_DATA_DIR}
-
-LITMUS_HOST_DB_PATH=${HOST_DB_PATH}
-LITMUS_HOST_CHROMA_PATH=${HOST_CHROMA_PATH}
 EOF
 
 echo ""
 echo "✅  .env written to $ENV_FILE"
-echo "    host db    : $HOST_DB_PATH"
-echo "    host chroma: $HOST_CHROMA_PATH"
 echo ""
 echo "Next steps:"
-echo "  1. ./start.sh # boots backend + dashboard"
-echo "  2. cd into your agent project"
-echo "  3. Install litmus-sdk from pypi.
-echo "  4. litmus init # auto-discovers paths from the backend"
+echo "  1. ./start.sh                 # boots backend + dashboard"
+echo "  2. pip install litmus-sdk     # install the SDK"
+echo "  3. cd into your agent project"
+echo "  4. litmus init && litmus push && litmus watch"
 echo ""
