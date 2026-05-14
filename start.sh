@@ -21,3 +21,5 @@ DASHBOARD_PORT="${DASHBOARD_PORT:-3000}"
 
 echo "   Dashboard → http://localhost:${DASHBOARD_PORT}"
 echo "   API       → http://localhost:${API_PORT}"
+echo ""
+echo "Next: in your agent project, run  litmus init  to wire the SDK to this backend."
